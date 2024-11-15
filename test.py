@@ -47,9 +47,13 @@ def run_attack(image_path, class_index):  # Reduced from 8/255 to 4/255
         # print("Initializing FGSM attack...")
         # atk = torchattacks.FGSM(model, eps=2/255)
 
-        atk1 = torchattacks.CW(model, c=0.1, steps=1000, lr=0.01)
-        atk2 = torchattacks.CW(model, c=1, steps=1000, lr=0.01)
+        atk1 = torchattacks.FGSM(model, eps=2/255)
+        atk2 = torchattacks.PGD(model, eps=1/255, alpha=2/255, steps=4, random_start=True)
         atk = torchattacks.MultiAttack([atk1, atk2])
+
+        # atk1 = torchattacks.CW(model, c=0.1, steps=1000, lr=0.01)
+        # atk2 = torchattacks.CW(model, c=1, steps=1000, lr=0.01)
+        # atk = torchattacks.MultiAttack([atk1, atk2])
         
         # Set normalization (ImageNet values)
         atk.set_normalization_used(
