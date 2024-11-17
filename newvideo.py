@@ -1,6 +1,7 @@
 # video.py
 
 import torch
+import torch_directml  # Add this import
 import torchvision
 import torchvision.transforms as transforms
 from PIL import Image
@@ -28,8 +29,11 @@ def process_frame(frame, model, atk, device, transform, label):
     return adv_frame
 
 def run_video_attack(video_path, class_index):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch_directml.device()  # Change the device setup
     print(f"Using device: {device}")
+    print(f"Device name: {device}")
+    print(f"PyTorch version: {torch.__version__}")
+    print(f"DirectML available: {torch_directml.is_available()}")
     
     model = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.IMAGENET1K_V1)
     model = model.eval().to(device)
