@@ -47,7 +47,9 @@ def run_video_attack(video_path, class_index):
     
     transform = transforms.Compose([transforms.ToTensor()])
     
-    atk = torchattacks.FGSM(model, eps=8/255)  # Reduced epsilon
+    atk1 = torchattacks.FGSM(model, eps=1/255)
+    atk2 = torchattacks.PGD(model, eps=1/255, alpha=2/255, steps=40, random_start=True)
+    atk = torchattacks.MultiAttack([atk1, atk2])
 
     atk.set_normalization_used(
         mean=[0.485, 0.456, 0.406],

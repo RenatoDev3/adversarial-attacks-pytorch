@@ -42,7 +42,7 @@ def run_video_attack(video_path, class_index):
     
     # Attack setup with reduced epsilon
     atk1 = torchattacks.FGSM(model, eps=1/255)
-    atk2 = torchattacks.PGD(model, eps=1/255, alpha=2/255, steps=4, random_start=True)
+    atk2 = torchattacks.PGD(model, eps=1/255, alpha=2/255, steps=40, random_start=True)
     atk = torchattacks.MultiAttack([atk1, atk2])
 
     #  atk = torchattacks.FGSM(model, eps=1/255)  # Reduced epsilon
