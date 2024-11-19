@@ -9,6 +9,7 @@ import torchattacks
 import cv2
 import numpy as np
 from tqdm import tqdm
+import subprocess  # Add this import at the top
 
 def process_frame(frame, model, atk, device, transform, label):
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -85,6 +86,25 @@ def run_video_attack(video_path, class_index):
         cap.release()
         adv_writer.release()
         print("Saved: adversarial_output.mp4")
+        
+        # Add audio from original video using ffmpeg
+        try:
+            ffmpeg_cmd = [
+                'ffmpeg',
+                '-i', 'adversarial_output.mp4',  # Video without audio
+                '-i', video_path,                # Original video with audio
+                '-c:v', 'copy',                  # Copy video stream
+                '-map', '0:v:0',                 # Use video from first input
+                '-map', '1:a:0',                 # Use audio from second input
+                '-y',                            # Overwrite output if exists
+                'output.mp4'               # Final output file
+            ]
+            subprocess.run(ffmpeg_cmd, check=True)
+            print("Final video with audio saved as: final_output.mp4")
+        except subprocess.CalledProcessError as e:
+            print(f"Error merging audio: {e}")
+        except FileNotFoundError:
+            print("ffmpeg not found. Please ensure ffmpeg is installed and in your PATH")
 
 if __name__ == "__main__":
     run_video_attack("input.mp4", 0)
